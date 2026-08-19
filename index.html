@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A special birthday surprise for Momo. Built with love.">
+    <title>Happy Birthday Momo ❤️</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Dancing+Script:wght@400;600&family=Outfit:wght@200;300;400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Canvas for Floating Hearts & Sparkles -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Welcome / Entry Screen (Multi-Step Redesign) -->
+    <div id="welcome-screen" class="welcome-screen">
+        <div class="opening-viewport">
+
+            <!-- STEP 1: Welcome Greeting -->
+            <div id="step-1" class="opening-step active">
+                <div class="opening-card">
+                    <div class="opening-img-container-full">
+                        <img src="assets/opening/screen_1.png" alt="Cozy Surprise" class="opening-photo-full">
+                        <button id="btn-goto-step2" class="btn-overlay-step1" onclick="showOpeningStep(3)" aria-label="Tap to see it"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: Secret PIN Screen -->
+            <div id="step-3" class="opening-step">
+                <div class="opening-card">
+                    <div class="opening-img-container-full">
+                        <img src="assets/opening/screen_3.png" alt="Secret Passcode" class="opening-photo-full">
+                        
+                        <!-- 4 PIN Dots Overlay positioned exactly over the 4 heart boxes on the board -->
+                        <div class="pin-dots-container-overlay" id="pin-dots">
+                            <div class="pin-dot"></div>
+                            <div class="pin-dot"></div>
+                            <div class="pin-dot"></div>
+                            <div class="pin-dot"></div>
+                        </div>
+                    </div>
+                    <div class="opening-card-content" style="padding: 20px 24px;">
+                        <!-- Keypad -->
+                        <div class="keypad-grid" id="pin-keypad" style="margin-top: 0;">
+                            <button class="key-btn" data-val="1">1</button>
+                            <button class="key-btn" data-val="2">2</button>
+                            <button class="key-btn" data-val="3">3</button>
+                            <button class="key-btn" data-val="4">4</button>
+                            <button class="key-btn" data-val="5">5</button>
+                            <button class="key-btn" data-val="6">6</button>
+                            <button class="key-btn" data-val="7">7</button>
+                            <button class="key-btn" data-val="8">8</button>
+                            <button class="key-btn" data-val="9">9</button>
+                            <button class="key-btn key-back" data-val="back">⌫</button>
+                            <button class="key-btn" data-val="0">0</button>
+                            <button class="key-btn key-heart" data-val="heart">❤️</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: Wrong Passcode -->
+            <div id="step-4" class="opening-step">
+                <div class="opening-card">
+                    <div class="opening-img-container-full">
+                        <img src="assets/opening/screen_4.png" alt="Wrong Passcode" class="opening-photo-full">
+                        <button id="btn-retry" class="btn-overlay-step4" onclick="resetWrongPin()" aria-label="Try Again"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: Correct Passcode -->
+            <div id="step-5" class="opening-step">
+                <div class="opening-card">
+                    <div class="opening-img-container-full">
+                        <img src="assets/opening/screen_5.png" alt="Correct Passcode" class="opening-photo-full">
+                        <button id="btn-continue" class="btn-overlay-step5" onclick="showOpeningStep(6)" aria-label="Continue"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 6: Surprise Unlocked -->
+            <div id="step-6" class="opening-step">
+                <div class="opening-card portal-card">
+                    <div class="opening-img-container-full portal-img-container" id="portal-img-container">
+                        <img src="assets/opening/screen_6.png" alt="Surprise Awaits" class="opening-photo-full portal-photo"
+                            id="portal-door-photo">
+                        <!-- Glow overlay that fills the screen during transit -->
+                        <div class="magic-portal-flash" id="portal-flash"></div>
+                    </div>
+                    <div class="opening-card-content" style="padding: 20px 24px; text-align: center; display: flex; justify-content: center; width: 100%;">
+                        <button id="btn-start-site-real" class="btn-primary" onclick="openMagicDoor()" style="display: inline-flex; align-items: center; justify-content: center; width: 60%; font-size: 1rem; border-radius: 50px;">
+                            Continue ➔
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header id="main-header" class="header hidden">
+        <div class="nav-container">
+            <a href="#hero" class="nav-logo font-cursive">To Doctor mama ❤️</a>
+            <nav id="navbar" class="navbar">
+                <a href="#hero" class="nav-link active">Home</a>
+                <a href="#story" class="nav-link">Our Story</a>
+                <a href="#memories" class="nav-link">Memories</a>
+                <a href="#reasons" class="nav-link">Reasons</a>
+                <a href="#letter" class="nav-link">Letter</a>
+                <a href="#surprise" class="nav-link">Surprise</a>
+            </nav>
+            <button id="nav-toggle" class="nav-toggle" aria-label="Toggle Navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="main-content hidden">
+
+        <!-- Hero Section -->
+        <section id="hero" class="section hero-section">
+            <div class="hero-bg-zoom" id="hero-bg"></div>
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h2 class="hero-title" id="hero-title">Happy 23 Momo ❤️</h2>
+                <div class="hero-image-wrapper">
+                    <img id="hero-avatar" src="" alt="Momo Portrait" class="hero-avatar">
+                    <div class="avatar-frame"></div>
+                </div>
+                <div class="scroll-indicator" id="scroll-hint">
+                    <span>Scroll Down</span>
+                    <i class="fa-solid fa-chevron-down scroll-arrow"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Story Section -->
+        <section id="story" class="section story-section">
+            <div class="section-container">
+                <h2 class="section-heading text-center">Our Story <span class="heart-icon">❤️</span></h2>
+                <p class="section-description text-center">Every moment with you is a beautiful memory. Here is a
+                    timeline of us.</p>
+
+                <div class="timeline-container">
+                    <div class="timeline-line"></div>
+                    <div id="timeline-list" class="timeline-list">
+                        <!-- Story cards populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Photo Memories Section -->
+        <section id="memories" class="section memories-section">
+            <div class="section-container">
+                <h2 class="section-heading text-center">Our Little Memories <span class="camera-icon">📸</span></h2>
+                <p class="section-description text-center">Captured moments of happiness, laughter, and endless love.
+                </p>
+
+                <!-- Gallery Wrapper for Stack and Fan -->
+                <div class="gallery-wrapper">
+                    <!-- Center watermark text -->
+                    <div id="gallery-center-text" class="gallery-center-text">Our Little Memories ❤️</div>
+                    
+                    <!-- Stack container -->
+                    <div id="gallery-grid" class="gallery-container-stack">
+                        <!-- Gallery cards populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="gallery-action-container" style="text-align: center; margin-top: 30px; position: relative; z-index: 10;">
+                    <button id="btn-open-memories" class="btn-primary" onclick="toggleMemoriesFan()">
+                        Open Our Memories ❤️
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lightbox Modal for Photo Gallery -->
+        <div id="lightbox-modal" class="lightbox-modal">
+            <button class="lightbox-close" id="lightbox-close" aria-label="Close image popup">&times;</button>
+            <button class="lightbox-prev" id="lightbox-prev" aria-label="Previous image"><i
+                    class="fa-solid fa-chevron-left"></i></button>
+            <button class="lightbox-next" id="lightbox-next" aria-label="Next image"><i
+                    class="fa-solid fa-chevron-right"></i></button>
+            <div class="lightbox-content">
+                <img id="lightbox-img" src="" alt="Enlarged memory">
+                <div class="lightbox-caption-box">
+                    <h3 id="lightbox-title"></h3>
+                    <p id="lightbox-meta"><span id="lightbox-date"></span> &bull; <span id="lightbox-loc"></span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Things I Love Section -->
+        <section id="reasons" class="section reasons-section">
+            <div class="section-container">
+                <h2 class="section-heading text-center">Things I Love About You <span class="heart-icon">💕</span></h2>
+                <p class="section-description text-center">A few (of the millions) of little reasons you hold my whole
+                    heart.</p>
+
+                <div id="reasons-grid" class="reasons-grid">
+                    <!-- Reason cards populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Video Surprise Section -->
+        <section id="video-surprise" class="section video-surprise-section">
+            <div class="section-container">
+                <h2 class="section-heading text-center">A Little Something for You... <span class="video-icon">🎥</span></h2>
+                <p class="section-description text-center">I made this just for you ❤️</p>
+
+                <div class="video-preview-card" onclick="window.openVideoPlayer()">
+                    <div class="video-thumbnail-container">
+                        <div class="video-placeholder-cover">
+                            <i class="fa-solid fa-play play-glow-icon"></i>
+                            <div class="video-cover-hearts">💖 ✨ 📸 👩‍❤️‍👨</div>
+                        </div>
+                    </div>
+                    <div class="video-card-action">
+                        <button id="btn-watch-video" class="btn-primary" onclick="event.stopPropagation(); window.openVideoPlayer()">
+                            Watch My Video ❤️
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Video Player Modal -->
+        <div id="video-modal" class="video-modal" onclick="window.closeVideoPlayer()">
+            <div class="video-modal-content" onclick="event.stopPropagation()">
+                <button class="video-modal-close" id="video-modal-close" onclick="window.closeVideoPlayer()" aria-label="Close video popup">&times;</button>
+                <div class="video-player-wrapper">
+                    <video id="surprise-video" controls preload="metadata" playsinline>
+                        <source src="assets/video/birthday-video.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+        </div>
+
+        <!-- Birthday Cake Section -->
+        <section id="cake-section" class="section cake-section">
+            <div class="section-container">
+                <h2 class="section-heading text-center">Today Is Your Day <span class="cake-emoji">🎂</span></h2>
+                <p class="section-description text-center">Make a wish, blow out the candles, and let's celebrate!</p>
+
+                <div class="cake-container">
+                    <div class="cake-wrapper">
+                        <!-- Interactive CSS Birthday Cake -->
+                        <div class="cake" id="birthday-cake">
+                            <div class="plate"></div>
+                            <div class="layer layer-bottom"></div>
+                            <div class="layer layer-middle"></div>
+                            <div class="layer layer-top"></div>
+                            <div class="frosting"></div>
+                            <div class="candle-container">
+                                <div class="candle" id="candle-1">
+                                    <div class="flame"></div>
+                                </div>
+                                <div class="candle" id="candle-2">
+                                    <div class="flame"></div>
+                                </div>
+                                <div class="candle" id="candle-3">
+                                    <div class="flame"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="cake-instruction" id="cake-instruction">Click the candles to blow them out! 🌬️</p>
+                    </div>
+
+                    <!-- Birthday Wish Card (Hidden initially, slides in after candle blow) -->
+                    <div class="wish-card" id="birthday-wish-card">
+                        <div class="card-inner">
+                            <i class="fa-solid fa-cake-candles wish-icon"></i>
+                            <h3 class="wish-title font-cursive">Happy Birthday Momo!</h3>
+                            <p class="wish-text" id="birthday-cake-message"></p>
+                            <span class="wish-signature font-cursive">Forever Yours</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Surprise Section -->
+        <section id="surprise" class="section surprise-section">
+            <div class="surprise-transition-overlay" id="surprise-overlay"></div>
+
+            <div class="surprise-content text-center">
+                <div class="surprise-step" id="surprise-step-1">
+                    <h3 class="surprise-cinematic-text font-cursive">Before you go...</h3>
+                </div>
+                <div class="surprise-step hidden" id="surprise-step-2">
+                    <h3 class="surprise-cinematic-text">There is one more thing I want you to know.</h3>
+                </div>
+                <div class="surprise-step hidden" id="surprise-step-3">
+                    <div class="final-card">
+                        <h2 class="final-heading font-cursive">Happy Birthday, Momo ❤️</h2>
+                        <p class="final-paragraph" id="final-personalized-message"></p>
+                        <p class="final-closing font-cursive">Here's to many more memories together. ❤️</p>
+                        <button id="restart-btn" class="btn-secondary">Relive the Surprise ✨</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-bottom">
+        <p>Made with Love for Momo &bull; 2026</p>
+    </footer>
+
+    <!-- GSAP & Canvas Confetti CDNs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Custom Logic -->
+    <script src="script.js"></script>
+</body>
+
+</html>
